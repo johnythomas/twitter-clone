@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react"
+import PropTypes from "prop-types"
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import LoadingBar from "react-redux-loading"
@@ -10,7 +11,7 @@ import Nav from "./Nav"
 
 class App extends Component {
   componentDidMount() {
-    this.props.dispatch(handleInitialData())
+    this.props.handleInitialData()
   }
 
   render() {
@@ -34,8 +35,13 @@ class App extends Component {
   }
 }
 
+App.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  handleInitialData: PropTypes.func.isRequired
+}
+
 const mapStateToProps = ({ authedUser }) => ({
   loading: authedUser === null
 })
 
-export default connect(mapStateToProps)(App)
+export default connect(mapStateToProps, { handleInitialData })(App)

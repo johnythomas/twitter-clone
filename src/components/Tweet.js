@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import PropTypes from "prop-types"
 import { Link, withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import TiArrowBackOutline from "react-icons/lib/ti/arrow-back-outline"
@@ -15,20 +16,18 @@ class Tweet extends Component {
 
   handleLike = e => {
     e.preventDefault()
-    const { dispatch, tweet, authedUser } = this.props
-    dispatch(
-      handleToggleTweet({
-        id: tweet.id,
-        hasLiked: tweet.hasLiked,
-        authedUser
-      })
-    )
+    const { toggleTweet, tweet, authedUser } = this.props
+    toggleTweet({
+      id: tweet.id,
+      hasLiked: tweet.hasLiked,
+      authedUser
+    })
   }
 
   render() {
     const { tweet } = this.props
     if (tweet === null) {
-      return <p>This tweet doesn't exist</p>
+      return <p>{"This tweet doesn't exist"}</p>
     }
     const {
       id,
@@ -77,6 +76,28 @@ class Tweet extends Component {
   }
 }
 
+Tweet.propTypes = {
+  tweet: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    avatar: PropTypes.string.isRequired,
+    timestamp: PropTypes.number.isRequired,
+    text: PropTypes.string.isRequired,
+    hasLiked: PropTypes.bool.isRequired,
+    likes: PropTypes.number.isRequired,
+    replies: PropTypes.number.isRequired,
+    parent: PropTypes.shape({
+      author: PropTypes.string,
+      id: PropTypes.string
+    })
+  }).isRequired,
+  authedUser: PropTypes.string.isRequired,
+  toggleTweet: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
+}
+
 const mapStateToProps = ({ authedUser, users, tweets }, { id }) => {
   const tweet = tweets[id]
   const parentTweet = tweet ? tweets[tweet.replyingTo] : null
@@ -88,4 +109,6 @@ const mapStateToProps = ({ authedUser, users, tweets }, { id }) => {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(Tweet))
+export default withRouter(
+  connect(mapStateToProps, { toggleTweet: handleToggleTweet })(Tweet)
+)

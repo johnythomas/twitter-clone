@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import PropTypes from "prop-types"
 import { Redirect } from "react-router-dom"
 import { connect } from "react-redux"
 import { handleAddTweet } from "../actions/tweets"
@@ -20,9 +21,9 @@ class NewTweet extends Component {
   handleSubmit = e => {
     e.preventDefault()
     const { text } = this.state
-    const { dispatch, id } = this.props
+    const { id, addTweet } = this.props
 
-    dispatch(handleAddTweet(text, id))
+    addTweet(text, id)
 
     this.setState(() => ({
       text: "",
@@ -59,4 +60,13 @@ class NewTweet extends Component {
   }
 }
 
-export default connect()(NewTweet)
+NewTweet.propTypes = {
+  id: PropTypes.string,
+  addTweet: PropTypes.func.isRequired
+}
+
+NewTweet.defaultProps = {
+  id: null
+}
+
+export default connect(null, { addTweet: handleAddTweet })(NewTweet)

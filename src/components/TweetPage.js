@@ -1,30 +1,30 @@
-import React, { Component } from "react"
+import React from "react"
+import PropTypes from "prop-types"
 import { connect } from "react-redux"
 import Tweet from "./Tweet"
 import NewTweet from "./NewTweet"
 
-class TweetPage extends Component {
-  render() {
-    const { id, replies } = this.props
+const TweetPage = ({ id, replies }) => (
+  <div>
+    <Tweet id={id} />
+    <NewTweet id={id} />
+    {replies.length !== 0 && <h3 className="center">Replies</h3>}
+    <ul>
+      {replies.map(replyId => (
+        <li key={replyId}>
+          <Tweet id={replyId} />
+        </li>
+      ))}
+    </ul>
+  </div>
+)
 
-    return (
-      <div>
-        <Tweet id={id} />
-        <NewTweet id={id} />
-        {replies.length !== 0 && <h3 className="center">Replies</h3>}
-        <ul>
-          {replies.map(replyId => (
-            <li key={replyId}>
-              <Tweet id={replyId} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
+TweetPage.propTypes = {
+  id: PropTypes.string.isRequired,
+  replies: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
 }
 
-const mapStateToProps = ({ authedUser, tweets, users }, props) => {
+const mapStateToProps = ({ tweets }, props) => {
   const { id } = props.match.params
 
   return {
